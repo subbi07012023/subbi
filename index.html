@@ -63,12 +63,12 @@
 
 <body class="flex items-center justify-center min-h-screen px-4">
 
-<audio id="sadMusic" loop>
-  <source src="https://cdn.pixabay.com/audio/2022/03/23/audio_6d4c9a6e47.mp3">
+<audio id="sadMusic" loop preload="auto">
+  <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-17.mp3" type="audio/mpeg">
 </audio>
 
-<audio id="romanticMusic" loop>
-  <source src="https://cdn.pixabay.com/audio/2023/02/28/audio_9b3c38cbe7.mp3">
+<audio id="romanticMusic" loop preload="auto">
+  <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
 </audio>
 
 <div class="glass p-10 text-center max-w-md w-full relative z-10 floating">
@@ -79,7 +79,7 @@
 
   <div class="relative inline-block mb-6">
     <img id="gif"
-      src="https://media.tenor.com/zGm5acSjHCIAAAAC/cat-kiss.gif"
+      src="https://media.tenor.com/97S9T99X878AAAAC/puss-in-boots-shrek.gif"
       class="rounded-3xl mx-auto h-[220px] w-[220px] shadow-2xl border-4 border-pink-500/20 object-cover"/>
   </div>
 
@@ -101,7 +101,6 @@
 </div>
 
 <script>
-/* THE DIALOGUE FLOW */
 const phrases = [
   "Subbi... will you be my Valentine? 🥺",
   "Please? I'll be the best ever! ✨",
@@ -111,7 +110,6 @@ const phrases = [
   "Okay, you're doing this on purpose now! 😂"
 ];
 
-/* THE SAD GIFS (The "Before" Gifs) */
 const sadGifs = [
   "https://media.tenor.com/97S9T99X878AAAAC/puss-in-boots-shrek.gif",
   "https://media.tenor.com/2roX3uxz_68AAAAC/cat-sad.gif",
@@ -122,6 +120,8 @@ const sadGifs = [
 let i = 0;
 let textIndex = 0;
 const q = document.getElementById("question");
+const sad = document.getElementById("sadMusic");
+const romantic = document.getElementById("romanticMusic");
 
 function typeWriter() {
   const currentText = phrases[textIndex];
@@ -132,34 +132,28 @@ function typeWriter() {
 }
 typeWriter();
 
-// Music starts on first click anywhere
-const sad = document.getElementById("sadMusic");
-const romantic = document.getElementById("romanticMusic");
-document.body.addEventListener("click", () => {
-    if(romantic.paused) sad.play();
-}, { once:true });
+// UNLOCK AUDIO ON FIRST CLICK
+document.body.addEventListener('click', function() {
+    if (romantic.paused) {
+        sad.play().catch(e => console.log("Audio play blocked"));
+    }
+}, { once: true });
 
 const noBtn = document.getElementById("no");
 const yesBtn = document.getElementById("yes");
 const gif = document.getElementById("gif");
 let noHoverCount = 0;
 
-/* THE NO BUTTON JUMPING & YES BUTTON GROWING */
 noBtn.addEventListener("mouseover", () => {
-  // Make Yes button massive
   const newScale = 1 + (noHoverCount * 0.4);
   yesBtn.style.transform = `scale(${newScale})`;
   
-  // Move No button to a random spot
-  const x = Math.random() * (window.innerWidth - 100) - (window.innerWidth / 2);
-  const y = Math.random() * (window.innerHeight - 100) - (window.innerHeight / 2);
   noBtn.style.position = 'fixed';
   noBtn.style.left = Math.random() * 70 + 15 + '%';
   noBtn.style.top = Math.random() * 70 + 15 + '%';
 
   noHoverCount++;
   
-  // Update text and sad gifs
   if (noHoverCount % 2 === 0) {
     textIndex = (textIndex + 1) % phrases.length;
     q.textContent = "";
@@ -169,23 +163,18 @@ noBtn.addEventListener("mouseover", () => {
   }
 });
 
-/* THE FINAL YES */
 document.getElementById("yes").addEventListener("click", () => {
   sad.pause();
-  romantic.play();
+  romantic.currentTime = 0; 
+  romantic.play().catch(e => console.log("Romantic music blocked"));
 
-  // Change background to "Love Mode"
   document.body.style.background = "radial-gradient(circle, #ff4d6d 0%, #ff758c 100%)";
-
-  // CHANGE TO THE HAPPY KISSING GIF ONLY NOW!
   gif.src = "https://i.postimg.cc/ydj8MGT3/bear-kiss-bear-kisses.gif";
   gif.style.transform = "scale(1.2)";
 
   q.innerHTML = "<span class='text-5xl block mb-2 font-bold'>YAYYY! ❤️</span> You've made me the happiest person!";
-  
   document.getElementById("buttons").innerHTML = "";
 
-  // Continuous Heart Rain
   setInterval(() => {
     const heart = document.createElement("div");
     heart.className = "heart";
@@ -197,7 +186,6 @@ document.getElementById("yes").addEventListener("click", () => {
     setTimeout(() => heart.remove(), 4000);
   }, 100);
 
-  // Big Confetti Burst
   confetti({
     particleCount: 250,
     spread: 100,
@@ -206,6 +194,5 @@ document.getElementById("yes").addEventListener("click", () => {
   });
 });
 </script>
-
 </body>
 </html>

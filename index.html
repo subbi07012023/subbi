@@ -53,29 +53,21 @@
     50% { opacity: 1; }
     100% { transform: translateY(110vh) scale(0.8); opacity: 0; }
   }
-
-  #no {
-    transition: all 0.2s ease-out;
-    z-index: 50;
-  }
 </style>
 </head>
 
 <body class="flex items-center justify-center min-h-screen px-4">
 
 <audio id="sadMusic" loop preload="auto">
-  <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-17.mp3" type="audio/mpeg">
+  <source src="https://www.bensound.com/bensound-music/bensound-tomorrow.mp3" type="audio/mpeg">
 </audio>
 
 <audio id="romanticMusic" loop preload="auto">
-  <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+  <source src="https://www.bensound.com/bensound-music/bensound-love.mp3" type="audio/mpeg">
 </audio>
 
 <div class="glass p-10 text-center max-w-md w-full relative z-10 floating">
-
-  <h1 class="text-6xl font-extrabold text-purple-400 glow-text mb-6">
-    Subbi 💖
-  </h1>
+  <h1 class="text-6xl font-extrabold text-purple-400 glow-text mb-6">Subbi 💖</h1>
 
   <div class="relative inline-block mb-6">
     <img id="gif"
@@ -83,115 +75,72 @@
       class="rounded-3xl mx-auto h-[220px] w-[220px] shadow-2xl border-4 border-pink-500/20 object-cover"/>
   </div>
 
-  <h2 id="question"
-    class="text-2xl font-semibold italic text-pink-100 min-h-[90px] px-2">
-  </h2>
+  <h2 id="question" class="text-2xl font-semibold italic text-pink-100 min-h-[90px] px-2"></h2>
 
   <div id="buttons" class="flex justify-center items-center gap-6 mt-6 h-20">
-    <button id="yes"
-      class="bg-gradient-to-r from-pink-500 to-rose-600 text-white font-bold px-10 py-4 text-2xl rounded-full shadow-[0_0_30px_rgba(236,72,153,0.4)] hover:brightness-110 active:scale-90 transition-all">
+    <button id="yes" class="bg-gradient-to-r from-pink-500 to-rose-600 text-white font-bold px-10 py-4 text-2xl rounded-full shadow-[0_0_30px_rgba(236,72,153,0.4)] hover:brightness-110 active:scale-90 transition-all">
       Yes! 💍
     </button>
-
-    <button id="no"
-      class="bg-white/10 text-gray-300 font-medium px-6 py-2 text-lg rounded-full border border-white/20">
+    <button id="no" class="bg-white/10 text-gray-300 font-medium px-6 py-2 text-lg rounded-full border border-white/20">
       No 😐
     </button>
   </div>
 </div>
 
 <script>
-const phrases = [
-  "Subbi... will you be my Valentine? 🥺",
-  "Please? I'll be the best ever! ✨",
-  "Don't click that red button... 😭",
-  "My heart is literally in your hands! 💔",
-  "I'm gonna start crying... 🌊",
-  "Okay, you're doing this on purpose now! 😂"
-];
+const phrases = ["Subbi... will you be my Valentine? 🥺", "Please? I'll be the best ever! ✨", "Don't click that red button... 😭", "My heart is literally in your hands! 💔", "I'm gonna start crying... 🌊"];
+const sadGifs = ["https://media.tenor.com/97S9T99X878AAAAC/puss-in-boots-shrek.gif", "https://media.tenor.com/2roX3uxz_68AAAAC/cat-sad.gif", "https://media.tenor.com/0mYfFj1Jk4IAAAAC/cat-cry.gif"];
 
-const sadGifs = [
-  "https://media.tenor.com/97S9T99X878AAAAC/puss-in-boots-shrek.gif",
-  "https://media.tenor.com/2roX3uxz_68AAAAC/cat-sad.gif",
-  "https://media.tenor.com/0mYfFj1Jk4IAAAAC/cat-cry.gif",
-  "https://media.tenor.com/4Q6zY0z8ZCkAAAAC/kitty-sad.gif"
-];
-
-let i = 0;
-let textIndex = 0;
-const q = document.getElementById("question");
-const sad = document.getElementById("sadMusic");
-const romantic = document.getElementById("romanticMusic");
+let i = 0, textIndex = 0;
+const q = document.getElementById("question"), sad = document.getElementById("sadMusic"), romantic = document.getElementById("romanticMusic"), gif = document.getElementById("gif"), noBtn = document.getElementById("no"), yesBtn = document.getElementById("yes");
 
 function typeWriter() {
-  const currentText = phrases[textIndex];
-  if (i < currentText.length) {
-    q.textContent += currentText[i++];
+  if (i < phrases[textIndex].length) {
+    q.textContent += phrases[textIndex][i++];
     setTimeout(typeWriter, 50);
   }
 }
 typeWriter();
 
-// UNLOCK AUDIO ON FIRST CLICK
-document.body.addEventListener('click', function() {
-    if (romantic.paused) {
-        sad.play().catch(e => console.log("Audio play blocked"));
-    }
-}, { once: true });
+// CRITICAL: AUDIO UNLOCK
+function playSad() {
+    sad.play().catch(e => console.log("Click again to play music"));
+    document.removeEventListener('click', playSad);
+}
+document.addEventListener('click', playSad);
 
-const noBtn = document.getElementById("no");
-const yesBtn = document.getElementById("yes");
-const gif = document.getElementById("gif");
 let noHoverCount = 0;
-
 noBtn.addEventListener("mouseover", () => {
-  const newScale = 1 + (noHoverCount * 0.4);
-  yesBtn.style.transform = `scale(${newScale})`;
-  
+  yesBtn.style.transform = `scale(${1 + (noHoverCount * 0.4)})`;
   noBtn.style.position = 'fixed';
   noBtn.style.left = Math.random() * 70 + 15 + '%';
   noBtn.style.top = Math.random() * 70 + 15 + '%';
-
   noHoverCount++;
-  
   if (noHoverCount % 2 === 0) {
     textIndex = (textIndex + 1) % phrases.length;
-    q.textContent = "";
-    i = 0;
-    typeWriter();
+    q.textContent = ""; i = 0; typeWriter();
     gif.src = sadGifs[Math.floor(Math.random() * sadGifs.length)];
   }
 });
 
-document.getElementById("yes").addEventListener("click", () => {
+yesBtn.addEventListener("click", () => {
   sad.pause();
-  romantic.currentTime = 0; 
-  romantic.play().catch(e => console.log("Romantic music blocked"));
-
+  romantic.play();
   document.body.style.background = "radial-gradient(circle, #ff4d6d 0%, #ff758c 100%)";
   gif.src = "https://i.postimg.cc/ydj8MGT3/bear-kiss-bear-kisses.gif";
-  gif.style.transform = "scale(1.2)";
-
   q.innerHTML = "<span class='text-5xl block mb-2 font-bold'>YAYYY! ❤️</span> You've made me the happiest person!";
   document.getElementById("buttons").innerHTML = "";
-
   setInterval(() => {
     const heart = document.createElement("div");
     heart.className = "heart";
-    heart.innerHTML = ["❤️","💖","💘","✨","🌸"][Math.floor(Math.random()*5)];
+    heart.innerHTML = "❤️";
     heart.style.left = Math.random() * 100 + "vw";
-    heart.style.fontSize = (Math.random() * 20 + 20) + "px";
+    heart.style.fontSize = "25px";
     heart.style.animationDuration = (2 + Math.random() * 2) + "s";
     document.body.appendChild(heart);
-    setTimeout(() => heart.remove(), 4000);
-  }, 100);
-
-  confetti({
-    particleCount: 250,
-    spread: 100,
-    origin: { y: 0.6 },
-    colors: ['#ff0000', '#ff69b4', '#ffffff']
-  });
+    setTimeout(() => heart.remove(), 3000);
+  }, 150);
+  confetti({ particleCount: 200, spread: 70, origin: { y: 0.6 } });
 });
 </script>
 </body>

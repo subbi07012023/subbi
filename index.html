@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>For Subbi 💘</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.skypack.dev/canvas-confetti"></script>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@400;600&display=swap');
+
+  body {
+    overflow: hidden;
+    background: radial-gradient(circle, #1a0b2e 0%, #000000 100%);
+    transition: all 1.5s ease;
+    font-family: 'Poppins', sans-serif;
+    color: white;
+  }
+
+  .glass {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 30px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+  }
+
+  .glow-text {
+    font-family: 'Dancing Script', cursive;
+    text-shadow: 0 0 20px #ff6aa2;
+  }
+
+  .floating {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+  }
+
+  .heart {
+    position: fixed;
+    pointer-events: none;
+    z-index: 0;
+    animation: fall linear infinite;
+  }
+
+  @keyframes fall {
+    0% { transform: translateY(-10vh) scale(0); opacity: 0; }
+    50% { opacity: 1; }
+    100% { transform: translateY(110vh) scale(0.8); opacity: 0; }
+  }
+
+  #no {
+    transition: all 0.2s ease-out;
+    z-index: 50;
+  }
+</style>
+</head>
+
+<body class="flex items-center justify-center min-h-screen px-4">
+
+<audio id="sadMusic" loop>
+  <source src="https://cdn.pixabay.com/audio/2022/03/23/audio_6d4c9a6e47.mp3">
+</audio>
+
+<audio id="romanticMusic" loop>
+  <source src="https://cdn.pixabay.com/audio/2023/02/28/audio_9b3c38cbe7.mp3">
+</audio>
+
+<div class="glass p-10 text-center max-w-md w-full relative z-10 floating">
+
+  <h1 class="text-6xl font-extrabold text-purple-400 glow-text mb-6">
+    Subbi 💖
+  </h1>
+
+  <div class="relative inline-block mb-6">
+    <img id="gif"
+      src="https://media.tenor.com/zGm5acSjHCIAAAAC/cat-kiss.gif"
+      class="rounded-3xl mx-auto h-[220px] w-[220px] shadow-2xl border-4 border-pink-500/20 object-cover"/>
+  </div>
+
+  <h2 id="question"
+    class="text-2xl font-semibold italic text-pink-100 min-h-[90px] px-2">
+  </h2>
+
+  <div id="buttons" class="flex justify-center items-center gap-6 mt-6 h-20">
+    <button id="yes"
+      class="bg-gradient-to-r from-pink-500 to-rose-600 text-white font-bold px-10 py-4 text-2xl rounded-full shadow-[0_0_30px_rgba(236,72,153,0.4)] hover:brightness-110 active:scale-90 transition-all">
+      Yes! 💍
+    </button>
+
+    <button id="no"
+      class="bg-white/10 text-gray-300 font-medium px-6 py-2 text-lg rounded-full border border-white/20">
+      No 😐
+    </button>
+  </div>
+</div>
+
+<script>
+/* THE DIALOGUE FLOW */
+const phrases = [
+  "Subbi... will you be my Valentine? 🥺",
+  "Please? I'll be the best ever! ✨",
+  "Don't click that red button... 😭",
+  "My heart is literally in your hands! 💔",
+  "I'm gonna start crying... 🌊",
+  "Okay, you're doing this on purpose now! 😂"
+];
+
+/* THE SAD GIFS (The "Before" Gifs) */
+const sadGifs = [
+  "https://media.tenor.com/97S9T99X878AAAAC/puss-in-boots-shrek.gif",
+  "https://media.tenor.com/2roX3uxz_68AAAAC/cat-sad.gif",
+  "https://media.tenor.com/0mYfFj1Jk4IAAAAC/cat-cry.gif",
+  "https://media.tenor.com/4Q6zY0z8ZCkAAAAC/kitty-sad.gif"
+];
+
+let i = 0;
+let textIndex = 0;
+const q = document.getElementById("question");
+
+function typeWriter() {
+  const currentText = phrases[textIndex];
+  if (i < currentText.length) {
+    q.textContent += currentText[i++];
+    setTimeout(typeWriter, 50);
+  }
+}
+typeWriter();
+
+// Music starts on first click anywhere
+const sad = document.getElementById("sadMusic");
+const romantic = document.getElementById("romanticMusic");
+document.body.addEventListener("click", () => {
+    if(romantic.paused) sad.play();
+}, { once:true });
+
+const noBtn = document.getElementById("no");
+const yesBtn = document.getElementById("yes");
+const gif = document.getElementById("gif");
+let noHoverCount = 0;
+
+/* THE NO BUTTON JUMPING & YES BUTTON GROWING */
+noBtn.addEventListener("mouseover", () => {
+  // Make Yes button massive
+  const newScale = 1 + (noHoverCount * 0.4);
+  yesBtn.style.transform = `scale(${newScale})`;
+  
+  // Move No button to a random spot
+  const x = Math.random() * (window.innerWidth - 100) - (window.innerWidth / 2);
+  const y = Math.random() * (window.innerHeight - 100) - (window.innerHeight / 2);
+  noBtn.style.position = 'fixed';
+  noBtn.style.left = Math.random() * 70 + 15 + '%';
+  noBtn.style.top = Math.random() * 70 + 15 + '%';
+
+  noHoverCount++;
+  
+  // Update text and sad gifs
+  if (noHoverCount % 2 === 0) {
+    textIndex = (textIndex + 1) % phrases.length;
+    q.textContent = "";
+    i = 0;
+    typeWriter();
+    gif.src = sadGifs[Math.floor(Math.random() * sadGifs.length)];
+  }
+});
+
+/* THE FINAL YES */
+document.getElementById("yes").addEventListener("click", () => {
+  sad.pause();
+  romantic.play();
+
+  // Change background to "Love Mode"
+  document.body.style.background = "radial-gradient(circle, #ff4d6d 0%, #ff758c 100%)";
+
+  // CHANGE TO THE HAPPY KISSING GIF ONLY NOW!
+  gif.src = "https://i.postimg.cc/ydj8MGT3/bear-kiss-bear-kisses.gif";
+  gif.style.transform = "scale(1.2)";
+
+  q.innerHTML = "<span class='text-5xl block mb-2 font-bold'>YAYYY! ❤️</span> You've made me the happiest person!";
+  
+  document.getElementById("buttons").innerHTML = "";
+
+  // Continuous Heart Rain
+  setInterval(() => {
+    const heart = document.createElement("div");
+    heart.className = "heart";
+    heart.innerHTML = ["❤️","💖","💘","✨","🌸"][Math.floor(Math.random()*5)];
+    heart.style.left = Math.random() * 100 + "vw";
+    heart.style.fontSize = (Math.random() * 20 + 20) + "px";
+    heart.style.animationDuration = (2 + Math.random() * 2) + "s";
+    document.body.appendChild(heart);
+    setTimeout(() => heart.remove(), 4000);
+  }, 100);
+
+  // Big Confetti Burst
+  confetti({
+    particleCount: 250,
+    spread: 100,
+    origin: { y: 0.6 },
+    colors: ['#ff0000', '#ff69b4', '#ffffff']
+  });
+});
+</script>
+
+</body>
+</html>
